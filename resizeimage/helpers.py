@@ -15,7 +15,7 @@ def url_to_image(url):
     """
     Fetch an image from url and convert it into a Pillow Image object
     """
-    r = requests.get(url)
+    r = requests.get(url, timeout=(3.05, 10))
     image = StringIO(r.content)
     return image
 
