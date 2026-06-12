@@ -7,6 +7,27 @@ from PIL import Image
 
 from resizeimage import resizeimage
 from resizeimage.imageexceptions import ImageSizeError
+from resizeimage.helpers import url_to_image
+
+try:
+    from mock import patch, Mock
+except ImportError:
+    from unittest.mock import patch, Mock
+
+
+class TestHelpers(unittest.TestCase):
+
+    @patch('resizeimage.helpers.requests.get')
+    def test_url_to_image_uses_timeout(self, mock_get):
+        mock_get.return_value = Mock(content=b'fake-image-bytes')
+
+        image = url_to_image('http://example.com/test.jpg')
+
+        mock_get.assert_called_once_with(
+            'http://example.com/test.jpg',
+            timeout=(3.05, 10)
+        )
+        self.assertEqual(image.getvalue(), b'fake-image-bytes')
 
 
 class TestValidateDecorator(unittest.TestCase):
